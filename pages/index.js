@@ -1,88 +1,92 @@
+import React from 'react'
+import PropTypes from 'prop-types'
+
 import Link from 'next/link'
-import Head from '../components/head'
-import Nav from '../components/nav'
+import styled from 'styled-components'
+
+import defaultPage from '../hocs/defaultPage'
+
+const SecretContent = styled.div`
+  background-color: #ecf0f1;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  border-radius: 2px;
+  padding: 10px;
+  min-height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #333;
+  text-align: center;
+  font-size: 40px;
+  font-weight: 100;
+  margin-bottom: 30px;
+`
+
+const Main = styled.div`
+  max-width: 750px;
+  margin: 0 auto;
+  text-align: center
+`
+const Heading = styled.h1`
+  font-size: 40px;
+  font-weight: 200;
+  line-height: 40px
+`
+const Content = styled.p`
+  font-size: 20px;
+  font-weight: 200;
+  line-height: 30px
+`
+const ContentLink = styled.a`
+  color: #333;
+  padding-bottom: 2px;
+  border-bottom: 1px solid #ccc;
+  text-decoration: none;
+  font-weight: 400;
+  line-height: 30px;
+  transition: border-bottom .2s;
+  &:hover {
+    border-bottomColor: #333;
+  }
+`
 
 import RoxContainer from '../services/rox/RoxContainer';
 import RoxService from '../services/rox/RoxService';
 RoxService(RoxContainer);
 
-export default () => (
+const SuperSecretDiv = () => (RoxContainer.superSecret.isEnabled() ? <SecretContent>
+    This is a super secret div.
+  </SecretContent> : null
+);
+
+const createLink = (href, text) => (
+  <ContentLink href={href}>{text}</ContentLink>
+)
+
+const Index = ({ isAuthenticated }) => (
   <div>
-    <Head title="Home" />
-    <Nav />
-
-    <div className="hero">
-      <h1 className="title">Welcome to Next!</h1>
-      <p className="description">To get started, edit <code>pages/index.js</code> and save to reload.</p>
-
-      <div className="row">
-        <Link href="https://github.com/zeit/next.js#getting-started">
-          <a className="card">
-            <h3>Getting Started &rarr;</h3>
-            <p>Learn more about Next on Github and in their examples</p>
-          </a>
-        </Link>
-        <Link href="https://open.segment.com/create-next-app">
-          <a className="card">
-            <h3>Examples &rarr;</h3>
-            <p>
-              Find other example boilerplates on the <code>create-next-app</code> site
-            </p>
-          </a>
-        </Link>
-        { RoxContainer.flagOne.isEnabled() && <Link href="https://github.com/segmentio/create-next-app">
-          <a className="card">
-            <h3>Create Next App &rarr;</h3>
-            <p>Was this tool helpful? Let us know how we can improve it</p>
-          </a>
-        </Link> }
-      </div>
-    </div>
-
-    <style jsx>{`
-      .hero {
-        width: 100%;
-        color: #333;
-      }
-      .title {
-        margin: 0;
-        width: 100%;
-        padding-top: 80px;
-        line-height: 1.15;
-        font-size: 48px;
-      }
-      .title, .description {
-        text-align: center;
-      }
-      .row {
-        max-width: 880px;
-        margin: 80px auto 40px;
-        display: flex;
-        flex-direction: row;
-        justify-content: space-around;
-      }
-      .card {
-        padding: 18px 18px 24px;
-        width: 220px;
-        text-align: left;
-        text-decoration: none;
-        color: #434343;
-        border: 1px solid #9B9B9B;
-      }
-      .card:hover {
-        border-color: #067df7;
-      }
-      .card h3 {
-        margin: 0;
-        color: #067df7;
-        font-size: 18px;
-      }
-      .card p {
-        margin: 0;
-        padding: 12px 0 0;
-        font-size: 13px;
-        color: #333;
-      }
-    `}</style>
+    {isAuthenticated && <SuperSecretDiv />}
+    <Main>
+      <Heading>Hello, friend!</Heading>
+      <Content>
+        This is a super simple example of how to use {createLink('https://github.com/zeit/next.js', 'next.js')} and {createLink('https://auth0.com/', 'Auth0')} together.
+      </Content>
+      {!isAuthenticated && (
+        <Content>
+          You're not authenticated yet. Maybe you want to <Link href='/auth/sign-in'>{createLink('/auth/sign-in', 'sign in')}</Link> and see what happens?
+        </Content>
+      )}
+      {isAuthenticated && (
+        <Content>
+          Now that you're authenticated, maybe you should try going to our <Link href='/secret'>{createLink('/secret', 'super secret page')}</Link>!
+        </Content>
+      )}
+    </Main>
   </div>
 )
+
+Index.propTypes = {
+  isAuthenticated: PropTypes.bool.isRequired
+}
+
+export default defaultPage(Index)
