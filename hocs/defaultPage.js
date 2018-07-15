@@ -1,6 +1,4 @@
 import React from 'react'
-import Rox from '../services/rox/RoxInstance';
-
 import Head from 'next/head'
 import Router from 'next/router'
 import styled from 'styled-components'
@@ -46,8 +44,6 @@ export default Page => class DefaultPage extends React.Component {
   }
 
   render () {
-    const { loggedUser } = this.props;
-    Rox.setCustomStringProperty('user.email', () => loggedUser ? loggedUser.email : null);
     const cssFiles = [
       'https://unpkg.com/normalize.css@5.0.0/normalize.css'
     ]

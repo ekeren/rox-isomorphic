@@ -4,7 +4,10 @@ export default function (container) {
     Rox.hasStarted = true;
     Rox.register('SSR', container);
     Rox.setup('5b44c8be1ee71c0f26927abd', {
-      platform: 'Isomorphic'
+      platform: 'Isomorphic',
+      configurationFetchedHandler: fetcherResults => console.log(fetcherResults),
+      configuration: typeof window !== 'undefined' ? window.rollout_conf : undefined
+      
     });
   }
 };
