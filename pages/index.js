@@ -50,15 +50,18 @@ const ContentLink = styled.a`
   }
 `
 
-import RoxContainer from '../services/rox/RoxContainer';
-import RoxService from '../services/rox/RoxService';
-import Rox from '../services/rox/RoxInstance';
-RoxService(RoxContainer);
+import { Rox, setup } from '../services/rox/RoxService';
+setup('5b4b53131ee71c0f269281e3', { 
+  c: {
+    superSecret: new Rox.Flag(),
+    justAnotherOne: new Rox.Flag()
+  }
+});
 
 import { getUserFromServerCookie, getUserFromLocalCookie } from '../utils/auth';
 
 Rox.setCustomStringProperty('user.email', context => {
-  console.log(context);
+  console.log("inside user-email"  + context);
   if (context.server){
     return context.loggedUser ? context.loggedUser.email : null;
   }
@@ -66,10 +69,15 @@ Rox.setCustomStringProperty('user.email', context => {
   return loggedUser ? loggedUser.email : null;
 });
 
-const SuperSecretDiv = ({ loggedUser }) => (RoxContainer.superSecret.isEnabled({loggedUser}) ? <SecretContent>
-    This is a super secret div.
-  </SecretContent> : null
-);
+const SuperSecretDiv = ({ loggedUser }) => {
+  const superSecret = Rox.containers.c.superSecret;
+  console.log(Rox.containers.c.justAnotherOne.isEnabled());
+  console.log("here superSecret=" + superSecret.isEnabled() );
+  return (superSecret.isEnabled() ? <SecretContent>
+          This is a super secret div.
+            </SecretContent> : null
+         );
+}
 
 const createLink = (href, text) => (
   <ContentLink href={href}>{text}</ContentLink>
